@@ -18,11 +18,12 @@ import java.util.function.Function;
 @Slf4j
 @Component
 public class JwtUtil {
-    private static final long EXPIRE_DURATION = 24 * 60 * 60 * 1000; // 24 hour
+
     @Value("${jwt.secret}")
     private String secret;
-    @Value("${jwt.expiration}")
+    @Value("${jwt.expiration}") // 24 hour
     private Long jwtExpiration;
+    private final static Integer EMAIL_INDEX = 1;
 
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
@@ -38,7 +39,7 @@ public class JwtUtil {
         return claimsResolver.apply(claims);
     }
     public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject).split(",")[1];
+        return extractClaim(token, Claims::getSubject).split(",")[EMAIL_INDEX];
     }
     public Boolean validateToken(String token, UserDetails userDetails){
         final String email = extractUsername(token);
